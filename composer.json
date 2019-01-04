@@ -1,6 +1,6 @@
 {
     "name": "lcatlett/platform-kickstart",
-    "description": "Template project for PHP libraries.",
+    "description": "Template project for Acquia Drupal 8 Platform Project.",
     "license": "MIT",
     "authors": [
         {
@@ -18,17 +18,41 @@
             "PlatformKickstart\\": "tests/src"
         }
     },
+    "repositories": {
+        "sfprofile": {
+            "type": "vcs",
+            "url": "https://github.com/lcatlett/sfprofile"
+        },
+        "drupal": {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        "assets": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    },
     "require": {
-        "php": ">=7.1"
+        "php": ">=7.1",
+        "consolidation/robo": "^1.3",
+        "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.6.5",
+        "drupal-composer/drupal-scaffold": "^2.5",
+        "drupal/console": "^1.0.2",
+        "drupal/core": "^8.6.0",
+        "drush/drush": "^9.0.0",
+        "vlucas/phpdotenv": "^2.4",
+        "webflo/drupal-finder": "^1.0.0",
+        "webmozart/path-util": "^2.3"
     },
     "require-dev": {
-        "consolidation/Robo": "^1.3",
         "knplabs/github-api": "^2.7",
         "php-http/guzzle6-adapter": "^1.1",
         "phpunit/phpunit": "^6",
         "g1a/composer-test-scenarios": "^2",
         "satooshi/php-coveralls": "^2",
-        "squizlabs/php_codesniffer": "^2.8"
+        "squizlabs/php_codesniffer": "^2.8",
+        "webflo/drupal-core-require-dev": "^8.6.0"
     },
     "scripts": {
         "phar:install-tools": [
@@ -55,6 +79,18 @@
         "scenario": "scenarios/install",
         "post-update-cmd": [
             "dependency-licenses"
+        ],
+        "pre-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "pre-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::checkComposerVersion"
+        ],
+        "post-install-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
+        ],
+        "post-update-cmd": [
+            "DrupalProject\\composer\\ScriptHandler::createRequiredFiles"
         ]
     },
     "config": {
@@ -64,9 +100,32 @@
             "php": "7.1.13"
         }
     },
+     "autoload": {
+        "classmap": [
+            "scripts/composer/ScriptHandler.php"
+        ],
+        "files": ["load.environment.php"]
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.x-dev"
+        },
+          "patchLevel": {
+            "drupal/core": "-p2"
+        },
+        "installer-paths": {
+            "web/core": ["type:drupal-core"],
+            "web/libraries/{$name}": ["type:drupal-library"],
+            "web/modules/contrib/{$name}": ["type:drupal-module"],
+            "web/profiles/contrib/{$name}": ["type:drupal-profile"],
+            "web/themes/contrib/{$name}": ["type:drupal-theme"],
+            "drush/Commands/{$name}": ["type:drupal-drush"]
+        },
+        "drupal-scaffold": {
+            "initial": {
+                ".editorconfig": "../.editorconfig",
+                ".gitattributes": "../.gitattributes"
+            }
         }
     }
 }
